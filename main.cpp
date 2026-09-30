@@ -35,7 +35,7 @@ int main() {
   threads.reserve(COUNT_THREADS);
 
   for (int i = 0; i < COUNT_THREADS; ++i) {
-    ThreadArgs args{i, "T' + std::to_string(i)};
+    ThreadArgs args{i, "T" + std::to_string(i)};
     std::promise<std::string> prom;
     std::future<std::string> fut = prom.get_future();
     

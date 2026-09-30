@@ -64,6 +64,7 @@ std::string funcThread(const ThreadArgs& args, Logger& logger, std::promise<std:
   }
   std::string result = "Thread " + args.tag + " completed" + std::to_string(COUNT_ITERATIONS) + " iterations";
   prom.set_value(result);
+  return result;
 }
 
 // Потребитель-производитель
@@ -76,12 +77,15 @@ bool done = false;
 
 void producer(Logger& logger){
   for (int i = 1; i <= 10; ++i){
-    std::lock_guard<std::mutex> lock(mtx);
+    std::unique_lock<std::mutex> lock(mtx);
     cv.wait(lock, [] { return !ready;});
     
     shared_value = i;
     ready = true;
-    cv.notify_one()
+    std::ostringstream oss;
+    oss << "[Producer] produced: " << i << "\n";
+    logger.writeLine(oss.str());
+    cv.notify_one();
   }
   {
     std::lock_guard<std::mutex> lock(mtx);

@@ -45,7 +45,7 @@ pid_t getThreadID();
 void about();
 
 extern std::mutex mtx;
-extern std::contion_variable cv;
+extern std::condition_variable cv;
 extern int shared_value;
 extern bool ready;
 extern bool done;
