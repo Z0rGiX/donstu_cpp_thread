@@ -48,6 +48,7 @@ void funcThread(const ThreadArgs& args, Logger& logger) {
         << "] pid = "  << ::getpid()
         << " ppid = "  << ::getppid()
         << " tid = "   << getThreadID()
+	<< " std::thread::id = " << std::this_thread::get_id()
         << " iter = "  << i
         << "\n";
     if(!logger.writeLine(oss.str())){
