@@ -3,6 +3,7 @@
 #include <string>
 #include <mutex>
 #include <fstream>
+#include <future>
 
 // count of threads and iterations
 constexpr int COUNT_THREADS    = 4;
@@ -33,7 +34,7 @@ private:
 };
 
 // function for thread
-void funcThread(const ThreadArgs& args, Logger& logger);
+std::string funcThread(const ThreadArgs& args, Logger& logger, std::promise<std::string> prom);
 
 // get system TID for current linux thread
 pid_t getThreadID();

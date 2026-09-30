@@ -42,7 +42,7 @@ void about() {
   std::cout << "std::thread example\n";
 }
 
-void funcThread(const ThreadArgs& args, Logger& logger) {
+std::string funcThread(const ThreadArgs& args, Logger& logger, std::promise<std::string> prom) {
   for (int i = 0; i < COUNT_ITERATIONS; ++i) {
     std::ostringstream oss;
 
@@ -61,4 +61,7 @@ void funcThread(const ThreadArgs& args, Logger& logger) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     counter++;
   }
+  std::string result = "Thread " + args.tag + " completed" + std::to_string(COUNT_ITERATIONS) + " iterations";
+  prom.set_value(result);
 }
+

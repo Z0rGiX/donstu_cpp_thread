@@ -2,6 +2,7 @@
 #include <vector>
 #include <thread>
 #include <sstream>
+#include <future>
 
 #include "threadfuncs.h"
 
@@ -24,21 +25,28 @@ int main() {
 
   // thread are starting
   std::vector<std::thread> threads;
+  std::vector<std::future<std::string>> futures;
   threads.reserve(COUNT_THREADS);
 
   for (int i = 0; i < COUNT_THREADS; ++i) {
-    std::ostringstream oss;
-    oss << "T" << i;
-    args[i].id = i;
-    args[i].tag = oss.str();
+    ThreadArgs args{i, "T' + std::to_string(i)};
+    std::promise<std::string> prom;
+    std::future<std::string> fut = prom.get_future();
+    
+   threads.emplace_back(funcThread, std::ref(args), std::ref(logger), std::move(prom));
+   futures.push_back(std::move(fut));
   }
-
+  for (auto& fut: futures){
+    std::string result = fut.get();
+    std::cout << "Result from thread: " << result << std::endl;
+  }
   // wait for stop all threads
   for (auto& t : threads) {
-    if (t.joinable()) t.join();
+    t.join();
   }
 
   // close file automatically
   logger.writeLine("output.log");
+  
   return 0;
 }
