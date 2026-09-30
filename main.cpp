@@ -30,7 +30,7 @@ int main() {
     std::ostringstream oss;
     oss << "T" << i;
     args[i].id = i;
-    args[i].tag = oss.str()
+    args[i].tag = oss.str();
   }
 
   // wait for stop all threads
