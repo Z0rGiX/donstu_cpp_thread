@@ -8,6 +8,7 @@
 //#include <windows.h>
 #include <sys/types.h>
 
+int counter = 0;
 Logger::Logger(const std::string& filename)
   : file_(filename, std::ios::out | std::ios::trunc)
 {
@@ -57,5 +58,6 @@ void funcThread(const ThreadArgs& args, Logger& logger) {
 
     // imitation of useful work
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    counter++;
   }
 }
