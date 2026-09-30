@@ -15,7 +15,7 @@ int main() {
   std::cout << "main: pid = " << getThreadID()
             << ", opened file: 'output.log'\n";
   std::thread t_producer(producer, std::ref(logger));
-  std::thread t_consumer(consuner, std::ref(logger));
+  std::thread t_consumer(consumer, std::ref(logger));
 
   t_producer.join();
   t_consumer.join();
