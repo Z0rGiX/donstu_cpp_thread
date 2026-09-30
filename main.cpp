@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <sstream>
 
 #include "threadfuncs.h"
 
@@ -26,7 +27,10 @@ int main() {
   threads.reserve(COUNT_THREADS);
 
   for (int i = 0; i < COUNT_THREADS; ++i) {
-    threads.emplace_back(funcThread, std::cref(args[i]), std::ref(logger));
+    std::ostringstream oss;
+    oss << "T" << i;
+    args[i].id = i;
+    args[i].tag = oss.str()
   }
 
   // wait for stop all threads
@@ -35,6 +39,6 @@ int main() {
   }
 
   // close file automatically
-  std::cout << "main: all threads finished, file closed\n";
+  logger.writeLine("output.log");
   return 0;
 }
