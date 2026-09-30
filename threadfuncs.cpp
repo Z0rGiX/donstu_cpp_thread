@@ -20,13 +20,15 @@ Logger::~Logger() {
   // std::ofstream close file here automatically
 }
 
-void Logger::writeLine(const std::string& msg) {
+bool Logger::writeLine(const std::string& msg) {
   std::lock_guard<std::mutex> lock(mutex_);
   file_ << msg;
   file_.flush();
   if (!file_) {
     std::cerr << "write failed: " << msg << "\n";
+    return false;
   }
+  return true;
 }
 
 pid_t getThreadID() {
@@ -48,7 +50,9 @@ void funcThread(const ThreadArgs& args, Logger& logger) {
         << " tid = "   << getThreadID()
         << " iter = "  << i
         << "\n";
-    logger.writeLine(oss.str());
+    if(!logger.writeLine(oss.str())){
+	std::cerr << "Error writting to log in thread" << args.id << "\n";
+    }
 
     // imitation of useful work
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
