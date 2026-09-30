@@ -7,8 +7,9 @@
 #include <syscall.h>
 //#include <windows.h>
 #include <sys/types.h>
+#include <atomic>
 
-int counter = 0;
+std::atomic<int> counter{0};
 Logger::Logger(const std::string& filename)
   : file_(filename, std::ios::out | std::ios::trunc)
 {
