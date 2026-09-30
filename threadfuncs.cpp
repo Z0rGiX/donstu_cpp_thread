@@ -8,6 +8,7 @@
 //#include <windows.h>
 #include <sys/types.h>
 #include <atomic>
+#include <chrono>
 
 std::atomic<int> counter{0};
 Logger::Logger(const std::string& filename)
@@ -65,3 +66,44 @@ std::string funcThread(const ThreadArgs& args, Logger& logger, std::promise<std:
   prom.set_value(result);
 }
 
+// Потребитель-производитель
+
+std::mutex mtx;
+std::condition_variable cv;
+int shared_value = 0;
+bool ready = false;
+bool done = false;
+
+void producer(Logger& logger){
+  for (int i = 1; i <= 10; ++i){
+    std::lock_guard<std::mutex> lock(mtx);
+    cv.wait(lock, [] { return !ready;});
+    
+    shared_value = i;
+    ready = true;
+    cv.notify_one()
+  }
+  {
+    std::lock_guard<std::mutex> lock(mtx);
+    done = true;
+    cv.notify_one();
+  }
+}
+
+void consumer(Logger& logger){
+  while (true){
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [] { return ready || done; });
+    if (done && !ready){
+      break;
+    }
+  int value = shared_value;
+  ready = false;
+  cv.notify_one();
+  lock.unlock();
+  
+  std::ostringstream oss;
+  oss << "[Consumer] got value: " << value << "\n";
+  logger.writeLine(oss.str());
+  }
+}

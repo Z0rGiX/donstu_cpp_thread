@@ -4,6 +4,8 @@
 #include <mutex>
 #include <fstream>
 #include <future>
+#include <condition_variable>
+#include <atomic>
 
 // count of threads and iterations
 constexpr int COUNT_THREADS    = 4;
@@ -41,3 +43,12 @@ pid_t getThreadID();
 
 // healline of software
 void about();
+
+extern std::mutex mtx;
+extern std::contion_variable cv;
+extern int shared_value;
+extern bool ready;
+extern bool done;
+
+void producer(Logger& logger);
+void consumer(Logger& logger);
